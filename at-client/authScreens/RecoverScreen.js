@@ -1,105 +1,86 @@
 import React from 'react';
-import qs from 'qs';
-import { Linking } from 'react-native';
-import email from 'react-native-email'
 
 import {
-  Image,
-  Platform,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
   TextInput,
   KeyboardAvoidingView,
-  Button
 } from 'react-native';
-import { SecureStore } from 'expo';
 
 import io from 'socket.io-client/dist/socket.io';
 window.navigator.userAgent='react-native';
+import { getUrl } from '../utils';
 
 export default class RecoverScreen extends React.Component {
 
   constructor() {
-  super();
-  this.state = {screenFirstName: '',
-  error:''};
+    super();
 
-  this.socket=io.connect('http://localhost:3000/authentication', {reconnect: true});
+    this.state = {
+      screenUserName: '',
+      error: '',
+    };
 
-};
+    this.socket = io.connect(getUrl('/authentication'), {reconnect: true});
+  };
 
-render() {
-        return (
-            <View style={styles.container}>
-                <Button title="Send Recovery Mail" onPress={this.handleEmail} />
-            </View>
-        )
-    }
+  render() {
+    return (
+      <KeyboardAvoidingView behavior="padding" style={styles.container}>
 
+        <TextInput
+          placeholder="username or email"
+          returnKeyType="next"
+          onSubmitEditing={()=>this.passwordInput.focus()}
+          keyboardType="email-address"
+          onChangeText={(text) => this.setState({ screenUserName: text })}
+          style={styles.input}
+        />
 
+        <TouchableOpacity
+          style={styles.buttonContainer}
+          onPress= {this._forgotPasswordAsync}>
+          <Text style={styles.buttonText}> Get Recovery Email </Text>
+        </TouchableOpacity>
 
-    handleEmail = () => {
-        const to = ['armandpoonawala08@gmail.com'] // string or array of email addresses
-        email(to, {
-            // Optional additional arguments
-            cc: ['armandpoonawala08@gmail.com'], // string or array of email addresses
-            bcc: 'armandpoonawala08@gmail.com', // string or array of email addresses
-            subject: 'Show how to use',
-            body: 'Some body right here'
-        }).catch(console.error)
-    }
+      </KeyboardAvoidingView>
+    );
+  }
+
+  _forgotPasswordAsync = async () => {
+    console.log('resetting password', this.state.screenUserName);
+    const username = this.state.screenUserName;
+    this.socket.emit('reset-password-request', {
+      email: this.state.screenUserName,
+    });
+  };
 }
 
-
-
-
-  const styles = StyleSheet.create({
-    Welcome:{
-      fontSize: 40,
-      height:40,
-      marginBottom: 20,
-      color:'#000000',
-      paddingHorizontal:10,
-    },
-
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center'
-    },
-
-    loginText: {
-      height:40,
-      marginBottom: 20,
-      color:'#000000',
-      paddingHorizontal:10,
-    },
-
-    input: {
-      height:40,
-      backgroundColor:'rgba(255,255,255,0.2)',
-      marginBottom: 20,
-      color:'#2980b9',
-      paddingHorizontal:10,
-    },
-    buttonContainer:{
-      backgroundColor:'#000000',
-      paddingVertical:15,
-    },
-    buttonText:{
-      textAlign:'center',
-      color: '#FFFFFF',
-      fontWeight:'700',
-    },
-    errorText:{
-      textAlign:'center',
-      color: '#8b0000',
-      fontSize:10,
-      paddingHorizontal:20,
-
-    }
-  });
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F5F5DC',
+  },
+  input: {
+    height:40,
+    backgroundColor:'rgba(255,255,255,0.2)',
+    marginBottom: 20,
+    color:'#2980b9',
+    paddingHorizontal:10,
+  },
+  buttonContainer:{
+    backgroundColor:'#000000',
+    paddingVertical:15,
+    paddingHorizontal:20,
+    marginBottom: 20,
+  },
+  buttonText:{
+    textAlign:'center',
+    color: '#FFFFFF',
+    fontWeight:'700',
+    paddingHorizontal:20,
+  },
+});

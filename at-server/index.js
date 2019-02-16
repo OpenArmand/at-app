@@ -5,6 +5,9 @@ var ss = require('socket.io-stream');
 var path = require('path');
 var uuid = require('uuid');
 var mongoose = require('mongoose');
+var nodemailer = require('nodemailer');
+var dedent = require('dedent');
+var bodyParser = require('body-parser');
 
 var fs= require('fs')
 var { Readable } = require('stream');
@@ -50,6 +53,9 @@ var getMediaModel = atObjects.getMediaModel;
 
 //testcommentchange
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded());
+
 app.get('/', function(req, res){
   fs.readFile(__dirname + '/index.html',
   function (err, data) {
@@ -62,6 +68,46 @@ app.get('/', function(req, res){
     res.end(data);
   });});
 
+
+app.get('/authentication/reset-password/:token', (req, res) => {
+  fs.readFile(__dirname + '/reset-password.html', (err, data) => {
+    if (err) {
+      res.writeHead(500);
+      return res.end('Error loading reset password page');
+    }
+
+    res.writeHead(200);
+    res.end(data);
+  });
+});
+
+
+app.post('/authentication/reset-password/:token', (req, res) => {
+  User.findOne({ token: req.params.token }, (err, user) => {
+    if (err) {
+      res.writeHead(406);
+      return res.end(JSON.stringify({
+        error: "token invalid",
+      }));
+    }
+
+    if ((new Date().getTime()) > user.expiry.getTime()) {
+      res.writeHead(406);
+      return res.end(JSON.stringify({
+        error: "token expired, generate a new one!",
+      }));
+    }
+
+    user.password = req.body.password;
+    user.save();
+    res.writeHead(200);
+    return res.end(JSON.stringify({
+      status: "password reset successful!",
+    }))
+  });
+});
+
+
 var authentication = io.of('/authentication');
 var MediaModel = null;
 mongoose.connect('mongodb://localhost/test');
@@ -69,144 +115,191 @@ mongoose.connection.once('open', () => {
   MediaModel = getMediaModel(mongoose.connection);
 });
 
-authentication.on('connection', function(socket){
-        //console.log('connection established...', socket);
+authentication.on('connection', function(socket) {
+  console.log('connection established...', socket);
 
-        socket.on('signUp', function(data){
-          //console.log('signUp', JSON.stringify(data));
+  socket.on('signUp', function(data){
+    console.log('signUp', JSON.stringify(data));
 
-          User.findOne({ username: data.screenUserName }, function(err, user) {
-          if (user!=null){
-            var usernameStatus={status:"username already exists"}
-           socket.emit('loginStatus', usernameStatus); // emit an event to the socket
-         }
-           else{
+    User.findOne({ username: data.screenUserName }, function(err, user) {
+      if (user != null) {
+        var usernameStatus = { status:"username already exists" }
+        socket.emit('loginStatus', usernameStatus); // emit an event to the socket
+      }
+      else {
+        var newUser = new User();
+        newUser.username = data.screenUserName ;
+        newUser.password = data.screenPassword;
+        newUser.firstName = data.screenFirstName;
+        newUser.lastName = data.screenLastName;
+        newUser.businessName = data.screenBusinessName;
+        newUser.save();
 
-             var newUser= new User();
-             newUser.username=data.screenUserName ;
-             newUser.password=data.screenPassword;
-             newUser.firstName=data.screenFirstName;
-             newUser.lastName=data.screenLastName;
-             newUser.businessName=data.screenBusinessName;
-             newUser.save();
+        if (newUser.businessName == "ContentCreator"){
+          var newContentCreator = new ContentCreatorModel();
+          newContentCreator.username = data.screenUserName ;
+          newContentCreator.firstName = data.screenFirstName;
+          newContentCreator.lastName = data.screenLastName;
+          newContentCreator.businessName = data.screenBusinessName;
+          newContentCreator.save();
+        }
 
-             if (newUser.businessName=="ContentCreator"){
-               var newContentCreator=new ContentCreatorModel();
-               newContentCreator.username=data.screenUserName ;
-               newContentCreator.firstName=data.screenFirstName;
-               newContentCreator.lastName=data.screenLastName;
-               newContentCreator.businessName=data.screenBusinessName;
-               newContentCreator.save();
-             }
+        else if (newUser.businessName == "Core"){
+          var newCore = new CoreModel();
+          newCore.username = data.screenUserName ;
+          newCore.firstName = data.screenFirstName;
+          newCore.lastName = data.screenLastName;
+          newCore.businessName = data.screenBusinessName;
+          newCore.save();
+        }
 
-             else if (newUser.businessName=="Core"){
-               var newCore=new CoreModel();
-               newCore.username=data.screenUserName ;
-               newCore.firstName=data.screenFirstName;
-               newCore.lastName=data.screenLastName;
-               newCore.businessName=data.screenBusinessName;
-               newCore.save();
+        else if (newUser.businessName == "Photographer"){
+          var newPhotographer = new PhotographerModel();
+          newPhotographer.username = data.screenUserName ;
+          newPhotographer.firstName = data.screenFirstName;
+          newPhotographer.lastName = data.screenLastName;
+          newPhotographer.businessName = data.screenBusinessName;
+          newPhotographer.save();
+        }
 
-             }
+        else if (newUser.businessName == "Coordination"){
+          var newCoordination = new CoordinationModel();
+          newCoordination.username = data.screenUserName ;
+          newCoordination.firstName = data.screenFirstName;
+          newCoordination.lastName = data.screenLastName;
+          newCoordination.businessName = data.screenBusinessName;
+          newCoordination.save();
+        }
 
-             else if (newUser.businessName=="Photographer"){
-               var newPhotographer=new PhotographerModel();
-               newPhotographer.username=data.screenUserName ;
-               newPhotographer.firstName=data.screenFirstName;
-               newPhotographer.lastName=data.screenLastName;
-               newPhotographer.businessName=data.screenBusinessName;
-               newPhotographer.save();
+        else if (newUser.businessName == "God"){
+          var newGod = new GodModel();
+          newGod.username = data.screenUserName ;
+          newGod.firstName = data.screenFirstName;
+          newGod.lastName = data.screenLastName;
+          newGod.businessName = data.screenBusinessName;
+          newGod.save();
+        }
 
-             }
+        else if (newUser.businessName == "Designer"){
+          var newDesigner = new DesignerModel();
+          newDesigner.username = data.screenUserName ;
+          newDesigner.firstName = data.screenFirstName;
+          newDesigner.lastName = data.screenLastName;
+          newDesigner.businessName = data.screenBusinessName;
+          newDesigner.save();
+        }
 
+        else if (newUser.businessName == "Ad"){
+          var newAd = new AdModel();
+          newAd.username = data.screenUserName ;
+          newAd.firstName = data.screenFirstName;
+          newAd.lastName = data.screenLastName;
+          newAd.businessName = data.screenBusinessName;
+          newAd.save();
+        }
 
-             else if (newUser.businessName=="Coordination"){
-               var newCoordination=new CoordinationModel();
-               newCoordination.username=data.screenUserName ;
-               newCoordination.firstName=data.screenFirstName;
-               newCoordination.lastName=data.screenLastName;
-               newCoordination.businessName=data.screenBusinessName;
-               newCoordination.save();
+        else {
+          var newClient = new ClientModel();
+          newClient.username = data.screenUserName ;
+          newClient.firstName = data.screenFirstName;
+          newClient.lastName = data.screenLastName;
+          newClient.businessName = data.screenBusinessName;
+          newClient.save();
+        }
 
-             }
-             else if (newUser.businessName=="God"){
-               var newGod=new GodModel();
-               newGod.username=data.screenUserName ;
-               newGod.firstName=data.screenFirstName;
-               newGod.lastName=data.screenLastName;
-               newGod.businessName=data.screenBusinessName;
-               newGod.save();
-
-             }
-
-             else if (newUser.businessName=="Designer"){
-               var newDesigner=new DesignerModel();
-               newDesigner.username=data.screenUserName ;
-               newDesigner.firstName=data.screenFirstName;
-               newDesigner.lastName=data.screenLastName;
-               newDesigner.businessName=data.screenBusinessName;
-               newDesigner.save();
-
-             }
-
-             else if (newUser.businessName=="Ad"){
-               var newAd=new AdModel();
-               newAd.username=data.screenUserName ;
-               newAd.firstName=data.screenFirstName;
-               newAd.lastName=data.screenLastName;
-               newAd.businessName=data.screenBusinessName;
-               newAd.save();
-
-             }
-
-             else {
-               var newClient=new ClientModel();
-               newClient.username=data.screenUserName ;
-               newClient.firstName=data.screenFirstName;
-               newClient.lastName=data.screenLastName;
-               newClient.businessName=data.screenBusinessName;
-               newClient.save();
-
-             }
-
-             var usernameStatus="good to go";
-             socket.emit('loginStatus', usernameStatus); // emit an event to the socket
-               }
-
-
-               });
-          })
-
-          socket.on('signIn', async(data)=>{
-            // fetch user and test password verification
-           User.findOne({ username: data.screenUserName }, function(err, user) {
-           if (err || user==null){
-             var LoginStatus={status:"no such username"}
-            socket.emit('loginStatus', LoginStatus); // emit an event to the socket
-          }
-            else{
-
-
-          // test a matching password
-          user.comparePassword(data.screenPassword, function(err, isMatch) {
-
-
-              if (isMatch){
-                var LoginStatus={status:"success",businessName:user.businessName};
-              }
-              else{
-                var LoginStatus={status:"incorect password"};
-
-              }
-              socket.emit('loginStatus', LoginStatus); // emit an event to the socket
-                  });
-                }
-
-                });
-
-            })
-
+        var usernameStatus = "good to go";
+        socket.emit('loginStatus', usernameStatus); // emit an event to the socket
+      }
     });
+  });
+
+  socket.on('signIn', async(data) => {
+    // fetch user and test password verification
+    User.findOne({ username: data.screenUserName }, function(err, user) {
+      if (err || user == null) {
+        var LoginStatus={status:"no such username"}
+        socket.emit('loginStatus', LoginStatus); // emit an event to the socket
+      }
+      else {
+        // test a matching password
+        user.comparePassword(data.screenPassword, function(err, isMatch) {
+          if (isMatch) {
+            var LoginStatus = { status:"success", businessName: user.businessName };
+          }
+          else {
+            var LoginStatus = { status: "incorect password" };
+          }
+          socket.emit('loginStatus', LoginStatus); // emit an event to the socket
+        });
+      }
+    });
+  });
+
+  socket.on('reset-password-request', (data) => {
+    const email = data.email;
+
+    User.findOne({ $or: [ { username: email }, { email: email } ] }, (err, user) => {
+      if (err) {
+        console.log('error occured while fetching user', err);
+      }
+
+      user.generateResetToken(async (err, user) => {
+        console.log('err', err);
+        console.log('user', user);
+
+        const link = `http://192.168.1.11:3000/authentication/reset-password/${user.token}`;
+        const email = dedent`
+          Hello, @${user.username}!
+
+          Use this link to reset your password. This link will expire in 60 minutes!
+          ${link}
+        `;
+
+        // Generate test SMTP service account from ethereal.email
+        // Only needed if you don't have a real mail account for testing
+        let account = await nodemailer.createTestAccount();
+
+        // create reusable transporter object using the default SMTP transport
+        let transporter = nodemailer.createTransport({
+          host: "smtp.ethereal.email",
+          port: 587,
+          secure: false, // true for 465, false for other ports
+          auth: {
+            user: account.user, // generated ethereal user
+            pass: account.pass // generated ethereal password
+          }
+        });
+
+        //let transporter = nodemailer.createTransport({
+          //service: 'gmail',
+          //auth: {
+            //user: 'email@dot.tld',
+            //pass: 'Use App Password here',
+          //}
+        //});
+
+        // setup email data with unicode symbols
+        let mailOptions = {
+          from: '"Crave Password Resetter" <no-reply@crave.social>', // sender address
+          to: "crave.surveillance@gmail.com", // list of receivers
+          subject: "at Account password reset", // Subject line
+          text: email, // plain text body
+        };
+
+        // send mail with defined transport object
+        let info = await transporter.sendMail(mailOptions)
+
+        console.log("Message sent: %s", info.messageId);
+        // Preview only available when sending through an Ethereal account
+        console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+
+        // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+        // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
+      });
+    });
+  });
+});
+
 
 
     var entities = io.of('/entities');
