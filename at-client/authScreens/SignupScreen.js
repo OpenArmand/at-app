@@ -21,71 +21,70 @@ import { getUrl } from '../utils';
 export default class SignupScreen extends React.Component {
 
   constructor() {
-  super();
-  this.state = {screenFirstName: '',
-  screenLastName: '',
-  screenBusinessName: '',
-  screenUserName: '',
-  screenPassword:'',
-  error:''};
+    super();
+    this.state = {
+      screenFirstName: '',
+      screenLastName: '',
+      screenBusinessName: '',
+      screenUserName: '',
+      screenPassword: '',
+      error: ''
+    };
+
+    this.socket = io.connect(getUrl('/authentication'), {reconnect: true});
+  };
 
 
-  this.socket=io.connect(getUrl('/authentication'), {reconnect: true});
-
-};
-
-
-_signUpAsync = async () => {
+  _signUpAsync = async () => {
 
     //sign up request comes here.
-    await this.socket.emit('signUp', {screenFirstName: this.state.screenFirstName,
-    screenLastName: this.state.screenLastName,
-    screenBusinessName: this.state.screenBusinessName,
-    screenUserName: this.state.screenUserName,
-    screenPassword:this.state.screenPassword}); // emit an event to the socket
+    await this.socket.emit('signUp', {
+      screenFirstName: this.state.screenFirstName,
+      screenLastName: this.state.screenLastName,
+      screenBusinessName: this.state.screenBusinessName,
+      screenUserName: this.state.screenUserName,
+      screenPassword: this.state.screenPassword,
+      screenEmail: this.state.screenEmail,
+    }); // emit an event to the socket
 
     await this.socket.on('loginStatus', async(data)=>{
-      console.log("2");
+    console.log("2");
 
 
-      if(data.status=="username already exists"){
-        this.setState({error:"username already exists. Try another!"});
+    if (data.status == "username already exists") {
+      this.setState({error:"username already exists. Try another!"});
+    }
+    else {
+      console.log("3");
 
+      await SecureStore.setItemAsync('usernameToken',this.state.screenUserName);
+
+      if (this.state.screenBusinessName == "ContentCreator") {
+        this.props.navigation.navigate('ContentCreatorApp');
       }
-      else{
-        console.log("3");
-
-        await SecureStore.setItemAsync('usernameToken',this.state.screenUserName);
-
-        if (this.state.screenBusinessName=="ContentCreator"){
-          this.props.navigation.navigate('ContentCreatorApp');
-        }
-        else if (this.state.screenBusinessName=="Core"){
-          this.props.navigation.navigate('CoreApp');
-        }
-        else if (this.state.screenBusinessName=="Designer"){
-          this.props.navigation.navigate('DesignerApp');
-        }
-        else if (this.state.screenBusinessName=="Coordination"){
-          this.props.navigation.navigate('CoordinationApp');
-        }
-        else if (this.state.screenBusinessName=="God"){
-          this.props.navigation.navigate('GodApp');
-        }
-        else if (this.state.screenBusinessName=="Photographer"){
-          this.props.navigation.navigate('PhotographerApp');
-        }
-        else if (this.state.screenBusinessName=="Ad"){
-          this.props.navigation.navigate('AdApp');
-        }
-        else{
+      else if (this.state.screenBusinessName == "Core") {
+        this.props.navigation.navigate('CoreApp');
+      }
+      else if (this.state.screenBusinessName == "Designer") {
+        this.props.navigation.navigate('DesignerApp');
+      }
+      else if (this.state.screenBusinessName == "Coordination") {
+        this.props.navigation.navigate('CoordinationApp');
+      }
+      else if (this.state.screenBusinessName == "God") {
+        this.props.navigation.navigate('GodApp');
+      }
+      else if (this.state.screenBusinessName == "Photographer") {
+        this.props.navigation.navigate('PhotographerApp');
+      }
+      else if (this.state.screenBusinessName == "Ad") {
+        this.props.navigation.navigate('AdApp');
+      }
+      else {
         this.props.navigation.navigate('Package');
-        }
-
       }
-
-
-    });
+    }
+  });
 
 
   //setting the state so that the user stays signed in after logging in.
@@ -131,7 +130,7 @@ _signUpAsync = async () => {
                 placeholder="business name"
                   returnKeyType="next"
                   ref={(input)=>this.businessNameInput=input}
-                  onSubmitEditing={()=>this.emailInput.focus()}
+                  onSubmitEditing={()=>this.usernameInput.focus()}
                   keyboardType="email-address"
                   onChangeText={(text) => this.setState({screenBusinessName:text})}
 
@@ -141,14 +140,26 @@ _signUpAsync = async () => {
 
 
             <TextInput
-            placeholder="username or email"
+              placeholder="username"
+              returnKeyType="next"
+              ref={(input)=>this.usernameInput=input}
+              onSubmitEditing={()=>this.emailInput.focus()}
+              keyboardType="email-address"
+              style={styles.input}
+
+              onChangeText={(text) => this.setState({screenUserName:text})}
+
+              />
+
+            <TextInput
+              placeholder="email"
               returnKeyType="next"
               ref={(input)=>this.emailInput=input}
               onSubmitEditing={()=>this.passwordInput.focus()}
               keyboardType="email-address"
               style={styles.input}
 
-              onChangeText={(text) => this.setState({screenUserName:text})}
+              onChangeText={(text) => this.setState({screenEmail:text})}
 
               />
 

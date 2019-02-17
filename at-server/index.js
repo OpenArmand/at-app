@@ -133,6 +133,7 @@ authentication.on('connection', function(socket) {
         newUser.firstName = data.screenFirstName;
         newUser.lastName = data.screenLastName;
         newUser.businessName = data.screenBusinessName;
+        newUser.email = data.screenEmail;
         newUser.save();
 
         if (newUser.businessName == "ContentCreator"){
