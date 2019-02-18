@@ -1006,9 +1006,36 @@ toDos.on('connection', function(socket){
                   });
 
                   socket.on('getCalendar', function(data){
+                    console.log('getCalendar', data);
                     ClientModel.findOne({ username: data.clientUsername }, function(err, user) {
-                      //console.log(user);
-                      //console.log(user.contentCalendar);
+                      console.log(user);
+                      console.log(user.contentCalendar);
+                      const posts = user.contentCalendar["posts"];
+                      const promises = posts.map((post) => {
+                        const id = post.file;
+                        const readStream = MediaModel.readById(id);
+                        return new Promise((resolve, reject) => {
+                          let data = '';
+
+                          readStream.on('data', (chunk) => {
+                            data += chunk;
+                          });
+
+                          readStream.on('end', () => {
+                            post.base64 = data;
+                            console.log('id', id)
+
+                            MediaModel.findById(id, (file) => {
+                              post.contentType = file.contentType;
+                              resolve(post);
+                            });
+                          })
+                        });
+                      });
+
+                      Promise.all(promises).then(results => {
+                        socket.emit('gottenCalendar', results);
+                      });
 
                       socket.emit('gottenCalendar', user.contentCalendar["posts"]); // emit an event to the socket
                     });
@@ -1065,6 +1092,32 @@ const createStream = () => {
                               //if creator
                               //if core ..
 
+
+const instanceLocator = 'v1:us1:4bd64738-e3fb-4c98-bda3-9dba974c665e';
+
+//const chatkit = new Chatkit.default({
+  //instanceLocator,
+  //key: '4e75c82c-8881-4966-85fa-1c685dbe11ec:4woSofa6W9CxdqhVYOM73qBgwjg4goqIZDth5+4XJW0=',
+//});
+
+//app.post('/chat/auth', (req, res) => {
+  //const authData = chatkit.authenticate({
+    //userId: req.query.username,
+  //});
+
+  //res.status(authData.status)
+     //.send(authData.body);
+//});
+
+//const chat = io.of('/chat');
+
+//chat.on('connection', (socket) => {
+  //socket.on('get-instance-locator', (data) => {
+    //socket.emit('info', {
+      //instanceLocator,
+    //});
+  //});
+//});
 
 
 io.on('connection',function(socket){
