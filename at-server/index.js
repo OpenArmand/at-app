@@ -349,13 +349,14 @@ authentication.on('connection', function(socket) {
           else{
 
               ClientModel.find({}, function(err, users) {
-
+                console.log('users', users);
 
                 var clients=[];
                 for(var i=0; i<users.length;i++){
                     var clientObj={key:users[i]["username"], businessName:users[i]["businessName"], username:users[i]["username"]};
                     clients.push(clientObj);
                 }
+                console.log('clients', clients);
                 socket.emit('gottenAllClients', clients); // emit an event to the socket
 
               })
@@ -1011,33 +1012,35 @@ toDos.on('connection', function(socket){
                       console.log(user);
                       console.log(user.contentCalendar);
                       const posts = user.contentCalendar["posts"];
-                      const promises = posts.map((post) => {
+                      socket.emit('gottenCalendar', posts);
+
+                      posts.forEach((post, index) => {
                         const id = post.file;
                         const readStream = MediaModel.readById(id);
-                        return new Promise((resolve, reject) => {
-                          let data = '';
 
-                          readStream.on('data', (chunk) => {
-                            data += chunk;
+                        const res = {
+                          id: post.file,
+                          index: index,
+                        };
+
+                        let data = '';
+
+                        readStream.on('data', (chunk) => {
+                          console.log(chunk);
+                          console.log(typeof chunk);
+                          data += chunk.toString('base64');
+                        });
+
+                        readStream.on('end', () => {
+                          res.base64 = data;
+                          console.log('id', id)
+
+                          MediaModel.findById(id, (err, file) => {
+                            res.contentType = file.contentType;
+                            socket.emit('calendarItem', res);
                           });
-
-                          readStream.on('end', () => {
-                            post.base64 = data;
-                            console.log('id', id)
-
-                            MediaModel.findById(id, (file) => {
-                              post.contentType = file.contentType;
-                              resolve(post);
-                            });
-                          })
                         });
                       });
-
-                      Promise.all(promises).then(results => {
-                        socket.emit('gottenCalendar', results);
-                      });
-
-                      socket.emit('gottenCalendar', user.contentCalendar["posts"]); // emit an event to the socket
                     });
                   });
                 });
