@@ -8,6 +8,7 @@ var mongoose = require('mongoose');
 var nodemailer = require('nodemailer');
 var dedent = require('dedent');
 var bodyParser = require('body-parser');
+var ffmpeg = require('fluent-ffmpeg');
 
 var fs= require('fs')
 var { Readable } = require('stream');
@@ -42,6 +43,7 @@ var atObjects= require('./mongoose/atObjects.js');
 
 var StrategyModel = atObjects.StrategyModel;
 var PostModel = atObjects.PostModel;
+var ThumbnailModel = atObjects.ThumbnailModel;
 var ContentCalendarModel = atObjects.ContentCalendarModel;
 var ShootPlanModel = atObjects.ShootPlanModel;
 var PhotoShootModel = atObjects.PhotoShootModel;
@@ -116,7 +118,7 @@ mongoose.connection.once('open', () => {
 });
 
 authentication.on('connection', function(socket) {
-  console.log('connection established...', socket);
+  console.log('connection established...');
 
   socket.on('signUp', function(data){
     console.log('signUp', JSON.stringify(data));
@@ -943,11 +945,12 @@ toDos.on('connection', function(socket){
 
                     writePromise = new Promise((resolve, reject) => {
                       MediaModel.write(options, stream, (err, attachment) => {
+                        console.log('error', err);
                         id = attachment._id;
-                        //console.log('wrote....')
-                        //console.log('error', err);
-                        //console.log('attachment', attachment);
-                        resolve(id);
+                        console.log('wrote....')
+                        console.log('error', err);
+                        console.log('attachment', attachment);
+                        resolve({ id, type, ext});
                       });
                     });
                   });
@@ -966,9 +969,11 @@ toDos.on('connection', function(socket){
 
                   socket.on('createPost', function(data) {
                     ClientModel.findOne({ username: data.clientUsername }, async function(err, user) {
-                      //console.log('creating post...')
-
+                      console.log('creating post...')
+                      console.log('id', id);
                 //        user.popAndAdd(user.motherQueue,data.entity,data.msg);
+
+                      const media = await writePromise;
 
                       var post = {
                         tags: data.tags,
@@ -982,7 +987,62 @@ toDos.on('connection', function(socket){
                         file: id,
                       };
 
-                      await writePromise;
+                      console.log('media', media);
+                      if (media.type === 'video' || media.type == 'video') {
+                        console.log('creating thumbnail...');
+                        // create a thumbnail and save
+                        //
+                        // save the video to fs
+                        const readStream = MediaModel.readById(media.id);
+                        const writeStream = await new Promise((resolve, reject) => {
+                          const stream = fs.createWriteStream(`${uuid.v4()}.${media.ext}`);
+                          readStream.pipe(stream);
+                          readStream.on('end', () => resolve(stream));
+                        });
+
+                        // save the thumbnail to fs
+                        let fname = null;
+                        const thumbnailStream = await new Promise((resolve, reject) => {
+                          ffmpeg(writeStream.path)
+                            .on('filenames', (fns) => {
+                              console.log(fns);
+                              fname = fns[0];
+                              console.log('fname after assign', fname);
+                            })
+                            .on('end', () => {
+                              console.log('fname end', fname);
+                              resolve(fs.createReadStream(fname))
+                            })
+                            .screenshots({
+                              timestamps: [0],
+                              filename: '%f-thumbnail-at-%s-seconds.png',
+                            });
+                        });
+
+                        // copy the thumbnail from fs to mongodb
+                        MediaModel.write({
+                          contentType: 'image/png',
+                          filename: `${uuid.v4()}.png`
+                        },
+                          thumbnailStream,
+                          (err, file) => {
+                            console.log('thumbnail created', file);
+                            fs.unlink(thumbnailStream.path, console.log);
+
+                            const thumbnail = new ThumbnailModel({
+                              videoId: media.id,
+                              thumbnailId: file._id,
+                            });
+                            thumbnail.save((err, thumbnail) => {
+                              if (err)
+                                console.log('error occured while saving the thumbnail', err);
+                            });
+                          }
+                        );
+
+                        // delete the video
+                        fs.unlink(writeStream.path, console.log);
+                      }
 
                       //console.log('id', id);
                       const readStream = MediaModel.readById(id);
@@ -1016,27 +1076,42 @@ toDos.on('connection', function(socket){
 
                       posts.forEach((post, index) => {
                         const id = post.file;
-                        const readStream = MediaModel.readById(id);
 
                         const res = {
                           id: post.file,
                           index: index,
                         };
 
-                        let data = '';
+                        MediaModel.findById(id, async (err, file) => {
+                          console.log('error', err);
+                          res.contentType = file.contentType;
+                          let readStream = MediaModel.readById(id);
 
-                        readStream.on('data', (chunk) => {
-                          console.log(chunk);
-                          console.log(typeof chunk);
-                          data += chunk.toString('base64');
-                        });
+                          let data = '';
 
-                        readStream.on('end', () => {
-                          res.base64 = data;
-                          console.log('id', id)
+                          // send a thumbnail
+                          if (res.contentType.startsWith('video')) {
+                            let fname = null;
+                            readStream = await new Promise((resolve, reject) => {
+                              console.log(id);
+                              ThumbnailModel.findOne({ videoId: id }, (err, thumbnail) => {
+                                const id = thumbnail.thumbnailId;
+                                resolve(MediaModel.readById(id));
+                              });
+                            });
 
-                          MediaModel.findById(id, (err, file) => {
-                            res.contentType = file.contentType;
+                            res.contentType = 'image/png';
+                          }
+                          // send the image
+                          readStream.on('data', (chunk) => {
+                            console.log(chunk);
+                            console.log(typeof chunk);
+                            data += chunk.toString('base64');
+                          });
+
+                          readStream.on('end', () => {
+                            res.base64 = data;
+                            console.log('id', id)
                             socket.emit('calendarItem', res);
                           });
                         });

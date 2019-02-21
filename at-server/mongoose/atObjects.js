@@ -56,7 +56,16 @@ var PostSchema = new Schema({
   },
 });
 
-
+var ThumbnailSchema = new Schema({
+  videoId: {
+    type: Schema.Types.ObjectId,
+    ref: "media.files",
+  },
+  thumbnailId: {
+    type: Schema.Types.ObjectId,
+    ref: "media.files",
+  }
+});
 
  var ContentCalendarSchema = new Schema({
    ObjectID: String,
@@ -147,6 +156,7 @@ var PostSchema = new Schema({
 
 var StrategyModel = mongoose.model('Strategy', StrategySchema);
 var PostModel = mongoose.model('Post', PostSchema);
+var ThumbnailModel = mongoose.model('Thumbnail', ThumbnailSchema);
 var ContentCalendarModel = mongoose.model('ContentCalendar', ContentCalendarSchema);
 var ShootPlanModel = mongoose.model('ShootPlan', ShootPlanSchema);
 var PhotoShootModel = mongoose.model('PhotoShoot', PhotoShootSchema);
@@ -172,6 +182,7 @@ const getMediaModel = (mongoose) => {
 module.exports = {
   StrategySchema: StrategySchema,
   PostSchema: PostSchema,
+  ThumbnailSchema: ThumbnailSchema,
   ContentCalendarSchema: ContentCalendarSchema,
   ShootPlanSchema: ShootPlanSchema,
   PhotoShootSchema: PhotoShootSchema,
@@ -182,6 +193,7 @@ module.exports = {
 
   StrategyModel: StrategyModel,
   PostModel: PostModel,
+  ThumbnailModel: ThumbnailModel,
   ContentCalendarModel: ContentCalendarModel,
   ShootPlanModel: ShootPlanModel,
   PhotoShootModel: PhotoShootModel,
