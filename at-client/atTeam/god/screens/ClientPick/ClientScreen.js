@@ -4,6 +4,7 @@ import io from 'socket.io-client/dist/socket.io';
 import { SecureStore } from 'expo';
 import { CheckBox } from 'react-native-elements'
 
+import { getUrl } from '../../../../utils';
 
 export default class ClientScreen extends React.Component {
   constructor(){
@@ -14,7 +15,7 @@ export default class ClientScreen extends React.Component {
       previousSelected:'',
     }
 
-  this.socket=io.connect('http://localhost:3000/entities', {reconnect: true});
+  this.socket=io.connect(getUrl('/entities'), {reconnect: true});
 
   }
 
