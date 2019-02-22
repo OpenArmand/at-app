@@ -19,6 +19,8 @@ import RecoverScreen from './authScreens/RecoverScreen';
 import SignupScreen from './authScreens/SignupScreen';
 import PickServicesScreen from './Package/PickServicesScreen';
 import CustomizePackageScreen from './Package/CustomizePackageScreen';
+import RatingScreen from './ratings/RatingScreen';
+
 
 window.navigator.userAgent = "react-native";
 import io from 'socket.io-client/dist/socket.io';
@@ -78,6 +80,7 @@ const AuthContainer= createAppContainer(createSwitchNavigator(
     ContentCreatorApp: ContentCreatorClientSwitch,
     Auth: AuthStack,
     Package:PackageStack,
+    Rating:RatingScreen,
     CoreApp:CoreClientSwitch,
     CoordinationApp:CoordinationClientSwitch,
     DesignerApp:DesignerDrawerNavigator,

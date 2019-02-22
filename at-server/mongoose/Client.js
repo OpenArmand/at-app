@@ -153,36 +153,17 @@ var itemSchema= new Schema({
   contentCreatorUsername:String,
   cycleStart: Number,
 
-  contentCreatorThisMonthCalendar:{
-    type: Map,
-    of: [String],
-    default:{ 'def': ['defo']},
-  },
-  coreThisMonthCalendar:{
-    type: Map,
-    of: [String],
-    default:{ 'def': ['defo']},
-  },
-  coordinationThisMonthCalendar:{
-    type: Map,
-    of: [String],
-    default:{ 'def': ['defo']},
-  },
-  adThisMonthCalendar:{
-    type: Map,
-    of: [String],
-    default:{ 'def': ['defo']},
-  },
-  clientThisMonthCalendar:{
-    type: Map,
-    of: [String],
-    default:{ 'def': ['defo']},
-  },
-  godThisMonthCalendar:{
-    type: Map,
-    of: [String],
-    default:{ 'def': ['defo']},
-  },
+  strategyRating:[Number],
+  photographyRating:[Number],
+  contentRating:[Number],
+  adRating:[Number],
+  influencerRating:[Number],
+  engagementCampaignRating:[Number],
+  overallRating:[Number],
+
+
+
+
 
 
  });
@@ -190,13 +171,11 @@ var itemSchema= new Schema({
  ClientSchema.methods.getCalendarAndToDos =function(entity) {
    if(entity==="Client"){
      var calendar=this.clientCalendar;
-     var ThisMonthCalendar=this.clientThisMonthCalendar;
      var todos=this.clientToDos;
    }
 
    else if(entity==="ContentCreator"){
      var calendar=this.contentCreatorCalendar;
-     var ThisMonthCalendar=this.contentCreatorThisMonthCalendar;
 
      var todos=this.contentCreatorToDos;
 
@@ -204,13 +183,11 @@ var itemSchema= new Schema({
    else if(entity==="Core"){
      var calendar=this.coreCalendar;
      var todos=this.coreToDos;
-     var ThisMonthCalendar=this.coreThisMonthCalendar;
 
 
    }
    else if(entity==="Coordination"){
      var calendar=this.coordinationCalendar;
-     var ThisMonthCalendar=this.coordinationThisMonthCalendar;
 
      var todos=this.cooridnationToDos;
 
@@ -218,16 +195,14 @@ var itemSchema= new Schema({
    else if(entity==="Ad"){
      var calendar=this.adCalendar;
      var todos=this.adToDos;
-     var ThisMonthCalendar=this.adThisMonthCalendar;
 
 
    }
    else if(entity==="God"){
      var calendar=this.godCalendar;
      var todos=this.godToDos;
-     var ThisMonthCalendar=this.godThisMonthCalendar;
    }
-   return({neededCalendar:calendar, neededToDos:todos, neededThisMonthCalendar:ThisMonthCalendar});
+   return({neededCalendar:calendar, neededToDos:todos});
 
   };
 

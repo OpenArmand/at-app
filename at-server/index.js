@@ -70,10 +70,10 @@ mongoose.connection.once('open', () => {
 });
 
 authentication.on('connection', function(socket){
-        console.log('connection established...', socket);
+        //console.log('connection established...', socket);
 
         socket.on('signUp', function(data){
-          console.log('signUp', JSON.stringify(data));
+          //console.log('signUp', JSON.stringify(data));
 
           User.findOne({ username: data.screenUserName }, function(err, user) {
           if (user!=null){
@@ -274,7 +274,7 @@ authentication.on('connection', function(socket){
 
               ClientModel.find({username:data}, function(err, user) {
                 if (err){
-                  console.log(err);
+                  //console.log(err);
                 }
                 else{
 
@@ -356,12 +356,12 @@ authentication.on('connection', function(socket){
 
                             var clients=user.clients;
                             var clientArr=[];
-                            console.log("clients:"+clients);
+                            //console.log("clients:"+clients);
 
                             if (clients==undefined || clients==""){
                               clientArr.push(clientObj);
                               user.clients=clientArr;
-                              console.log("user.clients:"+user.clients);
+                              //console.log("user.clients:"+user.clients);
                             }
                             else{
                               //on old client
@@ -378,7 +378,7 @@ authentication.on('connection', function(socket){
                         })
 
                       if(contentCreatorOldUsername!='none'){
-                        console.log("contentCreatorOldUsername: "+contentCreatorOldUsername);
+                        //console.log("contentCreatorOldUsername: "+contentCreatorOldUsername);
                         ContentCreatorModel.findOne({username:contentCreatorOldUsername}, function(err, user) {
                           if (err || user== undefined){
                             msg+="error";
@@ -386,7 +386,7 @@ authentication.on('connection', function(socket){
                           else{
 
                             var clients=user.clients;
-                            console.log("clients:"+clients);
+                            //console.log("clients:"+clients);
                               //on old client
 
                               var foundClient = clients.find(function(element) {
@@ -439,7 +439,7 @@ authentication.on('connection', function(socket){
 
                               if(stop!='true'){
 
-                                console.log(stop);
+                                //console.log(stop);
                                 msg+=user.coreUsername+" assigned to "+user.businessName;
                                 if(data.configClicked!='true'){
                                   user.popAndAdd(user.signUpQueue,"God","Assign A Core");
@@ -456,7 +456,7 @@ authentication.on('connection', function(socket){
                             })
 
                             if(stop!='true'){
-                              console.log("stop again:"+stop);
+                              //console.log("stop again:"+stop);
 
 
                             CoreModel.findOne({username:data.coreUsername}, function(err, user) {
@@ -467,12 +467,12 @@ authentication.on('connection', function(socket){
 
                                 var clients=user.clients;
                                 var clientArr=[];
-                                console.log("clients:"+clients);
+                                //console.log("clients:"+clients);
 
                                 if (clients==undefined || clients==""){
                                   clientArr.push(clientObj);
                                   user.clients=clientArr;
-                                  console.log("user.clients:"+user.clients);
+                                  //console.log("user.clients:"+user.clients);
                                 }
                                 else{
                                   //on old client
@@ -496,7 +496,7 @@ authentication.on('connection', function(socket){
                               else{
 
                                 var clients=user.clients;
-                                console.log("clients:"+clients);
+                                //console.log("clients:"+clients);
                                   //on old client
 
                                   var foundClient = clients.find(function(element) {
@@ -642,10 +642,10 @@ authentication.on('connection', function(socket){
                      });
 
             socket.on('requestAdd', function(data){
-              console.log("data:"+data)
+              //console.log("data:"+data)
 
                   ClientModel.findOne({username:data.clientUsername}, async function(err, user) {
-                    console.log("service:"+data.service)
+                    //console.log("service:"+data.service)
 
                     await user.addService(data.service);
                     user.save();
@@ -666,7 +666,7 @@ var package = io.of('/package');
 
       ClientModel.findOne({username:data.clientUsername}, async function(err, user) {
         if(user==undefined || err){
-          console.log("no model error")
+          //console.log("no model error")
         }
         else{
 
@@ -702,7 +702,7 @@ var package = io.of('/package');
         var neededCalendar=user.getCalendarAndToDos(data.entity)["neededCalendar"];
 
         finalDates =[ ...neededCalendar.keys() ];
-        console.log("From INDEX: "+ finalDates)
+        //console.log("From INDEX: "+ finalDates)
 
           socket.emit('gottenAllCalendarItems', neededCalendar); // emit an event to the socket
 
@@ -836,7 +836,7 @@ toDos.on('connection', function(socket){
                   let writePromise = null;
 
                   socket.on('upload', (data) => {
-                    console.log('upload started');
+                    //console.log('upload started');
                     stream = createStream();
                     const ext = data.uri.split('.').pop();
                     const type = data.type;
@@ -849,9 +849,9 @@ toDos.on('connection', function(socket){
                     writePromise = new Promise((resolve, reject) => {
                       MediaModel.write(options, stream, (err, attachment) => {
                         id = attachment._id;
-                        console.log('wrote....')
-                        console.log('error', err);
-                        console.log('attachment', attachment);
+                        //console.log('wrote....')
+                        //console.log('error', err);
+                        //console.log('attachment', attachment);
                         resolve(id);
                       });
                     });
@@ -859,19 +859,19 @@ toDos.on('connection', function(socket){
 
                   socket.on('chunk', (data) => {
                     const chunk = data.chunk;
-                    console.log('got chunk', data.index, chunk);
+                    //console.log('got chunk', data.index, chunk);
                     stream.push(Buffer.from(chunk, 'base64'));
                   });
 
                   socket.on('upload-end', (data, callback) => {
-                    console.log('upload-ended');
+                    //console.log('upload-ended');
                     stream.push(null);
                     callback({ status: 'complete' });
                   });
 
                   socket.on('createPost', function(data) {
                     ClientModel.findOne({ username: data.clientUsername }, async function(err, user) {
-                      console.log('creating post...')
+                      //console.log('creating post...')
 
                 //        user.popAndAdd(user.motherQueue,data.entity,data.msg);
 
@@ -889,12 +889,12 @@ toDos.on('connection', function(socket){
 
                       await writePromise;
 
-                      console.log('id', id);
+                      //console.log('id', id);
                       const readStream = MediaModel.readById(id);
-                      console.log(readStream);
+                      //console.log(readStream);
                       MediaModel.findOne({ _id: id }, (err, file) => {
-                        console.log('err', err);
-                        console.log('file', file);
+                        //console.log('err', err);
+                        //console.log('file', file);
                       })
 
                       readStream.pipe(fs.createWriteStream(`read.jpg`));
@@ -913,8 +913,8 @@ toDos.on('connection', function(socket){
 
                   socket.on('getCalendar', function(data){
                     ClientModel.findOne({ username: data.clientUsername }, function(err, user) {
-                      console.log(user);
-                      console.log(user.contentCalendar);
+                      //console.log(user);
+                      //console.log(user.contentCalendar);
 
                       socket.emit('gottenCalendar', user.contentCalendar["posts"]); // emit an event to the socket
                     });
@@ -940,16 +940,44 @@ const createStream = () => {
                                 });
                               });
 
+
+                              var rating = io.of('/rating');
+
+                              rating.on('connection', function(socket){
+                                  socket.on('giveRating', function(data){
+
+
+                                    ClientModel.findOne({ username: data.clientUsername }, async function(err, user) {
+                                      //get appropriate array based on data.ratingType
+                                      //fill the array with the rating
+                                      //make some calculations
+
+                                  /*  if(user[data.ratingType]=="strategyRating"){
+                                      var ratingArr=user.strategyRating;
+                                    }*/
+
+                                    await  user[data.ratingType].push(data.rating);
+
+                                      console.log(user[data.ratingType]);
+
+                                      console.log(user.strategyRating);
+
+                                      user.save();
+
+
+                                        })
+                                      });
+                                    });
                               //if creator
                               //if core ..
 
 
 
 io.on('connection',function(socket){
-  console.log('there is a new connection');
+  //console.log('there is a new connection');
 
 });
 
 http.listen('3000', function(){
-  console.log('listening on *:3000');
+  //console.log('listening on *:3000');
 });

@@ -31,7 +31,7 @@ var imu= 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADMAAAAzCAYAAAA6oTAqAAAA
   // this.setState({image:data.image.data,description:data.description});
    this.setState({image:"data:image/jpeg;base64,"+data.image.data,description:data.description});
 
-   console.log(this.state.image);
+///   console.log(this.state.image);
 
   });
 }
@@ -39,8 +39,13 @@ var imu= 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADMAAAAzCAYAAAA6oTAqAAAA
 
   _done= async () => {
 
-  await this.socket.emit('done', {clientUsername:await SecureStore.getItemAsync('clientSelectedUsername'), entity:await SecureStore.getItemAsync('entityToken'), msg:'Approve Strategy Plan'});
-  this.props.navigation.navigate('Home');
+//  await this.socket.emit('done', {clientUsername:await SecureStore.getItemAsync('clientSelectedUsername'), entity:await SecureStore.getItemAsync('entityToken'), msg:'Approve Strategy Plan'});
+
+console.log("done");
+
+  this.props.navigation.navigate('Rating', {
+              type: "strategyRating",
+            });
 
   }
 
