@@ -71,7 +71,8 @@ app.get('/', function(req, res){
   });});
 
 app.get('/video/:id', (req, res) => {
-  const id = req.params.id;
+  const needsRedirection = req.params.id.split('.').length === 1;
+  const id = req.params.id.split('.')[0];
   console.log(`sending video ${id}`)
   MediaModel.findById(id, (err, file) => {
     if (err) {
@@ -79,6 +80,11 @@ app.get('/video/:id', (req, res) => {
       res.writeHead(500);
       return res.end('Error occurred');
     }
+
+    if (needsRedirection) {
+      return res.redirect(`/video/${id}.${file.contentType.split('/').pop()}`);
+    }
+
     console.log(file);
     const size = file.length;
     const headers = {

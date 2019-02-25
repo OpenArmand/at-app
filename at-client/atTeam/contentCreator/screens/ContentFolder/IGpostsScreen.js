@@ -84,6 +84,7 @@ export default class IGpostsScreen extends React.Component {
                     posterSource={{
                       uri: `data:image/png;base64,${item.base64}`,
                     }}
+                    shouldPlay
                     usePoster
                     useNativeControls
                     ref={this._handleVideoRef}
