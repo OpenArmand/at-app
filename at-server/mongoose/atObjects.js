@@ -54,6 +54,14 @@ var PostSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "media.files",
   },
+  height: {
+    type: Number,
+    default: 414,
+  },
+  width: {
+    type: Number,
+    default: 414,
+  },
 });
 
 var ThumbnailSchema = new Schema({

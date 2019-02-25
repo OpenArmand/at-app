@@ -70,6 +70,27 @@ app.get('/', function(req, res){
     res.end(data);
   });});
 
+app.get('/video/:id', (req, res) => {
+  const id = req.params.id;
+  console.log(`sending video ${id}`)
+  MediaModel.findById(id, (err, file) => {
+    if (err) {
+      console.log('error', err);
+      res.writeHead(500);
+      return res.end('Error occurred');
+    }
+    console.log(file);
+    const size = file.length;
+    const headers = {
+      'Content-Length': size,
+      'Content-Type': file.contentType,
+    }
+
+    const readStream = file.read();
+    res.writeHead(200, headers);
+    readStream.pipe(res);
+  });
+});
 
 app.get('/authentication/reset-password/:token', (req, res) => {
   fs.readFile(__dirname + '/reset-password.html', (err, data) => {
@@ -985,6 +1006,8 @@ toDos.on('connection', function(socket){
                         date: data.date,
                         time: data.time,
                         file: id,
+                        height: data.height,
+                        width: data.width,
                       };
 
                       console.log('media', media);
@@ -1091,6 +1114,8 @@ toDos.on('connection', function(socket){
 
                           // send a thumbnail
                           if (res.contentType.startsWith('video')) {
+                            res.videoId = id;
+
                             let fname = null;
                             readStream = await new Promise((resolve, reject) => {
                               console.log(id);
@@ -1099,8 +1124,6 @@ toDos.on('connection', function(socket){
                                 resolve(MediaModel.readById(id));
                               });
                             });
-
-                            res.contentType = 'image/png';
                           }
                           // send the image
                           readStream.on('data', (chunk) => {
@@ -1112,6 +1135,7 @@ toDos.on('connection', function(socket){
                           readStream.on('end', () => {
                             res.base64 = data;
                             console.log('id', id)
+                            console.log('res', res);
                             socket.emit('calendarItem', res);
                           });
                         });

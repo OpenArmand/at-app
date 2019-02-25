@@ -41,6 +41,8 @@ export default class CreatePostScreen extends React.Component {
       instagram: false,
       date: null,
       time: null,
+      height: null,
+      width: null,
     };
 
     this.socket=io.connect(getUrl('/content'), {reconnect: true});
@@ -87,17 +89,19 @@ export default class CreatePostScreen extends React.Component {
     // tell the server that the upload is complete and create the post entity
     await this.socket.emit('upload-end', {}, async (data) => {
       const res = await this.socket.emit('createPost', {
-          clientUsername: await SecureStore.getItemAsync('clientSelectedUsername'),
-          entity: await SecureStore.getItemAsync('entityToken'),
-          msg:'Create Post',
-          tags: this.state.tags,
-          caption: this.state.caption,
-          hashtags: this.state.hashtags,
-          location: this.state.location,
-          facebook: this.state.facebook,
-          instagram: this.state.instagram,
-          date: this.state.date,
-          time: this.state.time
+        clientUsername: await SecureStore.getItemAsync('clientSelectedUsername'),
+        entity: await SecureStore.getItemAsync('entityToken'),
+        msg:'Create Post',
+        tags: this.state.tags,
+        caption: this.state.caption,
+        hashtags: this.state.hashtags,
+        location: this.state.location,
+        facebook: this.state.facebook,
+        instagram: this.state.instagram,
+        date: this.state.date,
+        time: this.state.time,
+        height: this.state.height,
+        width: this.state.width,
       });
     });
   }
@@ -193,8 +197,12 @@ export default class CreatePostScreen extends React.Component {
       if (!result.cancelled) {
         console.log("uri: " + result.uri);
         console.log("type: " + result.type);
-        this.setState({ uri: result.uri });
-        this.setState({ type: result.type });
+        this.setState({
+          uri: result.uri,
+          type: result.type,
+          height: result.height,
+          width: result.width,
+        });
       }
     };
   }
