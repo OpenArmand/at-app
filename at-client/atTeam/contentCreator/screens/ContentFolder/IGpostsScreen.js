@@ -43,6 +43,7 @@ export default class IGpostsScreen extends React.Component {
       const posts = this.state.posts;
       posts[data.index].base64 = data.base64;
       posts[data.index].contentType = data.contentType;
+      posts[data.index].videoId = data.videoId;
       this.setState({ posts: posts });
     });
   }

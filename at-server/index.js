@@ -1030,14 +1030,16 @@ toDos.on('connection', function(socket){
                   });
 
                   socket.on('upload-end', (data, callback) => {
-                    //console.log('upload-ended');
+                    console.log('upload-ended');
                     stream.push(null);
-                    callback({ status: 'complete' });
-                  });
+               //     callback({ status: 'complete' });
+                //  });
 
-                  socket.on('createPost', function(data) {
+                //  socket.on('createPost', function(data) {
+                    console.log('creating post....', data);
                     ClientModel.findOne({ username: data.clientUsername }, async function(err, user) {
-                      console.log('creating post...')
+                      console.log('error', err);
+		      console.log('creating post...')
                       console.log('id', id);
                 //        user.popAndAdd(user.motherQueue,data.entity,data.msg);
 

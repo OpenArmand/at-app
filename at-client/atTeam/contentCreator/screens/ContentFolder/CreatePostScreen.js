@@ -87,8 +87,7 @@ export default class CreatePostScreen extends React.Component {
     await processChunks(this.state.uri, 255 * 1024, sendChunk);
 
     // tell the server that the upload is complete and create the post entity
-    await this.socket.emit('upload-end', {}, async (data) => {
-      const res = await this.socket.emit('createPost', {
+    await this.socket.emit('upload-end', {
         clientUsername: await SecureStore.getItemAsync('clientSelectedUsername'),
         entity: await SecureStore.getItemAsync('entityToken'),
         msg:'Create Post',
@@ -102,8 +101,7 @@ export default class CreatePostScreen extends React.Component {
         time: this.state.time,
         height: this.state.height,
         width: this.state.width,
-      });
-    });
+      }) 
   }
 
 
