@@ -9,6 +9,7 @@ var nodemailer = require('nodemailer');
 var dedent = require('dedent');
 var bodyParser = require('body-parser');
 var ffmpeg = require('fluent-ffmpeg');
+var Grid = require('gridfs-stream');
 
 var fs= require('fs')
 var { Readable } = require('stream');
@@ -55,6 +56,15 @@ var getMediaModel = atObjects.getMediaModel;
 
 //testcommentchange
 
+var MediaModel = null;
+var gfs = null;
+mongoose.connect('mongodb://localhost/test');
+mongoose.connection.once('open', () => {
+  MediaModel = getMediaModel(mongoose.connection);
+  gfs = Grid(mongoose.connection.db, mongoose.mongo);
+  gfs.collection(MediaModel.collection.name.replace('.files', ''));
+});
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 
@@ -87,14 +97,50 @@ app.get('/video/:id', (req, res) => {
 
     console.log(file);
     const size = file.length;
-    const headers = {
-      'Content-Length': size,
-      'Content-Type': file.contentType,
-    }
+    const range = req.headers.range
 
-    const readStream = file.read();
-    res.writeHead(200, headers);
-    readStream.pipe(res);
+
+    if (range) {
+      console.log('it is a range...')
+
+      const parts = range.replace(/bytes=/, "").split("-")
+      const start = parseInt(parts[0], 10)
+      const end = parts[1]
+        ? parseInt(parts[1], 10)
+        : size - 1
+
+      console.log(parts, start, end);
+      const chunksize = (end-start) + 1;
+
+      const gridFile = gfs.createReadStream({
+        _id: mongoose.mongo.ObjectID(id),
+        range: {
+          startPos: start,
+          endPos: end,
+
+        }
+      });
+
+      const head = {
+        'Content-Range': `bytes ${start}-${end}/${size}`,
+        'Accept-Ranges': 'bytes',
+        'Content-Length': chunksize,
+        'Content-Type': file.contentType,
+      }
+
+      res.writeHead(206, head);
+      gridFile.pipe(res);
+      gridFile.on('error', console.log)
+    }
+    else {
+      const head = {
+        'Content-Length': size,
+        'Content-Type': file.contentType,
+      }
+      const readStream = file.read();
+      res.writeHead(200, head);
+      readStream.pipe(res);
+    }
   });
 });
 
@@ -138,11 +184,6 @@ app.post('/authentication/reset-password/:token', (req, res) => {
 
 
 var authentication = io.of('/authentication');
-var MediaModel = null;
-mongoose.connect('mongodb://localhost/test');
-mongoose.connection.once('open', () => {
-  MediaModel = getMediaModel(mongoose.connection);
-});
 
 authentication.on('connection', function(socket) {
   console.log('connection established...');
