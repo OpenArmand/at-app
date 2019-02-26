@@ -17,7 +17,7 @@ import InfluencerTabNavigator from './InfluencerTabNavigator';
 
 import MainStrategyScreen from '../screens/StrategyFolder/MainStrategyScreen';
 
-import MainTabNavigator from './MainTabNavigator';
+import MainTabNavigator from '../../../HomeFolder/MainTabNavigator';
 import CoreAssignScreen from '../screens/ClientPick/config/CoreAssignScreen';
 import ContentCreatorAssignScreen from '../screens/ClientPick/config/ContentCreatorAssignScreen';
 

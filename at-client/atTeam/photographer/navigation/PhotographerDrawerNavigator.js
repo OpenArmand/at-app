@@ -17,7 +17,7 @@ import InfluencerTabNavigator from './InfluencerTabNavigator';
 
 import MainStrategyScreen from '../screens/StrategyFolder/MainStrategyScreen';
 
-import MainTabNavigator from './MainTabNavigator';
+import MainTabNavigator from '../../../HomeFolder/MainTabNavigator';
 
 
 const HomeSwitch= createSwitchNavigator({

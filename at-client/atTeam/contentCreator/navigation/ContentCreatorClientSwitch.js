@@ -17,14 +17,17 @@ import InfluencerTabNavigator from './InfluencerTabNavigator';
 
 import MainStrategyScreen from '../screens/StrategyFolder/MainStrategyScreen';
 
-import MainTabNavigator from './MainTabNavigator';
+import MainTabNavigator from '../../../HomeFolder/MainTabNavigator';
+
+
 
 import ClientScreen from '../screens/ClientPick/ClientScreen';
 import ClientSettingsScreen from '../screens/ClientPick/config/ClientSettingsScreen';
 import SelectServiceScreen from '../screens/ClientPick/config/SelectServiceScreen';
 import ConfigServiceScreen from '../screens/ClientPick/config/ConfigServiceScreen';
 import BrainstormScreen from '../screens/Brainstorm/BrainstormScreen';
-import CallScreen from '../screens/HomeFolder/CallScreen';
+import CallScreen from '../../../HomeFolder/CallScreen';
+
 import CoreAssignScreen from '../screens/ClientPick/config/CoreAssignScreen';
 import ContentCreatorAssignScreen from '../screens/ClientPick/config/ContentCreatorAssignScreen';
 

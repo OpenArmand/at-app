@@ -1,8 +1,7 @@
 import React from 'react';
 import {  FlatList,Button, Image,  Platform,  ScrollView,  StyleSheet,  Text,  TouchableOpacity,  View,}from 'react-native';
 import { WebBrowser } from 'expo';
-import { MonoText } from '../../components/StyledText';
-import ApprovalItem from '../../components/ApprovalItem';
+
 import { SecureStore } from 'expo';
 
 import io from 'socket.io-client/dist/socket.io';
@@ -13,12 +12,6 @@ export default class HomeScreen extends React.Component {
   static navigationOptions = {
     header: null,
     drawerLabel: 'Home',
-    drawerIcon: ({ tintColor }) => (
-          <Image
-            source={require('../../assets/images/at_sign.png')}
-            style={[styles.icon, {tintColor: tintColor}]}
-          />
-        ),
       };
 
 
@@ -37,6 +30,8 @@ export default class HomeScreen extends React.Component {
 
 
       async componentDidMount(){
+
+        console.log("hello");
 
         var clientUsername=await SecureStore.getItemAsync('clientSelectedUsername');
         console.log(clientUsername);
@@ -92,7 +87,7 @@ this.props.navigation.navigate('Client');
     return (
       <View style={styles.container}>
           <View style={styles.welcomeContainer}>
-            <Image source={require('../../assets/images/at_sign.png')}
+            <Image source={require('../assets/images/at_sign.png')}
               style={styles.welcomeImage}/>
           </View>
 

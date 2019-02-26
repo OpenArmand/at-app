@@ -16,7 +16,6 @@ import {
 } from 'react-native';
 import { WebBrowser } from 'expo';
 
-import { MonoText } from '../../components/StyledText';
 
 export default class CalendarScreen extends React.Component {
 

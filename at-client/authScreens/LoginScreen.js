@@ -211,7 +211,6 @@ await this.socket.on('loginStatus', async(data)=>{
       paddingHorizontal:20,
       marginBottom: 20,
 
-
     },
     buttonText:{
       textAlign:'center',

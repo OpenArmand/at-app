@@ -2,11 +2,11 @@ import React from 'react';
 import { Platform } from 'react-native';
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 
+import MainHomeScreen from './MainHomeScreen';
+import ActivityScreen from './ActivityScreen';
+import ChatScreen from './ChatScreen';
+import CalendarScreen from './CalendarScreen';
 import TabBarIcon from '../components/TabBarIcon';
-import MainHomeScreen from '../screens/HomeFolder/MainHomeScreen';
-import ActivityScreen from '../screens/HomeFolder/ActivityScreen';
-import ChatScreen from '../screens/HomeFolder/ChatScreen';
-import CalendarScreen from '../screens/HomeFolder/CalendarScreen';
 
 
 const HomeStack = createStackNavigator({
