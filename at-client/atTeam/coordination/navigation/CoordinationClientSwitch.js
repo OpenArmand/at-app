@@ -9,10 +9,10 @@ import MainAnalyticScreen from '../screens/AnalyticFolder/MainAnalyticScreen';
 import MainSurveillanceScreen from '../screens/SurveillanceFolder/MainSurveillanceScreen';
 
 import ContentTabNavigator from './ContentTabNavigator';
-import PhotographyTabNavigator from './PhotographyTabNavigator';
+import PhotographyStack from './PhotographyStack';
 import AdTabNavigator from './AdTabNavigator';
 
-import InfluencerTabNavigator from './InfluencerTabNavigator';
+import InfluencerStack from './InfluencerStack';
 
 import MainStrategyScreen from '../screens/StrategyFolder/MainStrategyScreen';
 
@@ -22,8 +22,8 @@ import ClientScreen from '../screens/ClientPick/ClientScreen';
 import ClientSettingsScreen from '../screens/ClientPick/config/ClientSettingsScreen';
 import SelectServiceScreen from '../screens/ClientPick/config/SelectServiceScreen';
 import ConfigServiceScreen from '../screens/ClientPick/config/ConfigServiceScreen';
-import CoreAssignScreen from '../screens/ClientPick/config/CoreAssignScreen';
-import ContentCreatorAssignScreen from '../screens/ClientPick/config/ContentCreatorAssignScreen';
+
+import PhotographerAssignScreen from '../screens/ClientPick/config/PhotographerAssignScreen';
 
 
 const DrawerNavigator = createDrawerNavigator({
@@ -40,10 +40,10 @@ const DrawerNavigator = createDrawerNavigator({
     screen:ContentTabNavigator,
   },
   Photography:{
-    screen:PhotographyTabNavigator,
+    screen:PhotographyStack,
   },
   Influencers:{
-    screen:InfluencerTabNavigator,
+    screen:InfluencerStack,
   },
   Ads:{
     screen:AdTabNavigator,
@@ -60,11 +60,8 @@ const DrawerNavigator = createDrawerNavigator({
 
 const ClientStack = createStackNavigator({
   'ClientMain': ClientScreen,
-  'ServiceSelectConfig': SelectServiceScreen,
-  'ServiceConfig': ConfigServiceScreen,
-  'CoreAssign':CoreAssignScreen,
-  'ContentCreatorAssign':ContentCreatorAssignScreen,
   'ClientSettings':ClientSettingsScreen,
+  'PhotographerAssign':PhotographerAssignScreen,
 
 });
 

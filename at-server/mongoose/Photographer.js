@@ -1,23 +1,19 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
-//mongoose.connect('mongodb://localhost/test');
-var Client= require('./Client.js');
-var ClientSchema= Client.ClientSchema;
+var atObjects= require('./atObjects.js');
 
-var ContentCreator= require('./ContentCreator.js');
-var ContentCreatorSchema= ContentCreator.ContentCreatorSchema;
-
-var Core= require('./Core.js');
-var CoreSchema= Core.CoreSchema;
+var PhotoShootSchema = atObjects.PhotoShootSchema;
 
 
 mongoose.connect('mongodb://localhost/test');
 //mongoose.connect("mongodb://armand_at:#LORDarmand2019@atsocial-shard-00-00-exfpm.gcp.mongodb.net:27017,atsocial-shard-00-01-exfpm.gcp.mongodb.net:27017,atsocial-shard-00-02-exfpm.gcp.mongodb.net:27017/test?ssl=true&replicaSet=AtSocial-shard-0&authSource=admin&retryWrites=true/", { useNewUrlParser: true });
 
 
- var Schema = mongoose.Schema;
-
+var ShootStorageSchema = new Schema({
+  key:String,
+  clientUsername:String,
+});
 
 
  var ClientStorageSchema = new Schema({
@@ -27,15 +23,39 @@ mongoose.connect('mongodb://localhost/test');
 
  });
 
+ var PhotographerProfileSchema=new Schema({
+   primaryLocation:String,
+   //needs to be filled for entire profile
+ });
+
  var PhotographerSchema = new Schema({
+   selected:{
+     type: Boolean,
+     default:false,
+   },
+   __v:Number,
+   photographerCalendar: {
+    type: Map,
+    of: [String],
+  },
+   profile:PhotographerProfileSchema,
+   invited:{
+     type: Boolean,
+     default:false,
+   },
+   invitedWithDatesKnown:{
+     type: Boolean,
+     default:false,
+   },
+   photoShootKeys:[ShootStorageSchema],
+
+   key:String,
    username:String,
    firstName: String,
    lastName:String,
    businessName:{
      type:String,
      required: true},
-
-     clients: [ClientStorageSchema],
 
   // clients: [ClientSchema],
   // contentCreator:[ContentCreatorSchema],

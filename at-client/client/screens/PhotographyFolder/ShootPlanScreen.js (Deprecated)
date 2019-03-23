@@ -1,0 +1,127 @@
+import React from 'react';
+import { Text,ScrollView, StyleSheet, View, Button } from 'react-native';
+import io from 'socket.io-client/dist/socket.io';
+import { SecureStore } from 'expo';
+
+
+export default class ShootPlanScreen extends React.Component {
+  static navigationOptions = {
+  };
+
+  constructor(){
+    super()
+    this.state={
+    }
+
+    this.socket=io.connect('http://localhost:3000/done', {reconnect: true});
+
+};
+
+
+  _addShootPlan= async () => {
+
+  this.props.navigation.navigate('Home');
+
+  }
+
+  _filterDate=async() => {
+
+  this.props.navigation.navigate('Home');
+
+  }
+
+
+  render() {
+    return (
+
+      <View style={styles.container}>
+
+        <View>
+          <Button title="View shoot plan" onPress={this._addShootPlan} />
+          </View>
+
+          <View>
+            <Button title="View Photographer Profile" onPress={this._addShootPlan} />
+            </View>
+
+            <View>
+            <Text>
+            finalizedPhotographer:{this.state.finalizedPhotographer}
+
+            </Text>
+              </View>
+
+              <View>
+                <Button title="View Photographer Profile" onPress={this._addShootPlan} />
+                </View>
+
+                <View>
+                <Text>
+                Dates and Times:
+                </Text>
+                  </View>
+
+                  <FlatList
+                  data={this.state.dataSource}
+                  extraData={this.state}
+                  renderItem={({item}) =>
+
+                  {
+                      return (
+
+                          <View style={styles.clientContainer}>
+
+                          <View style={styles.listText}>
+
+                            <Text>
+
+                            </Text>
+
+                            </View>
+
+                          <View>
+
+                          <CheckBox
+                            title='Select'
+                            checked={item.selected}
+                            onPress={() => this._filterDate(item)}
+                          />
+
+                          </View>
+
+                          </View>
+
+                      );
+                    }
+                  }
+
+                />
+
+              <View>
+                <Button title="View Photographer Profile" onPress={this._addShootPlan} />
+                </View>
+
+
+          </View>
+    );
+  }
+}
+
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingTop: 25,
+    backgroundColor: '#fff',
+  },
+  clientContainer:{
+    flex: 1,
+    paddingTop: 15,
+    flexDirection: 'row'
+  },
+  listText:{
+    paddingLeft:5,
+     width: "30%",
+      height: 48,
+       backgroundColor: "white" },
+});

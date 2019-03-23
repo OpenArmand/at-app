@@ -1,0 +1,81 @@
+import React from 'react';
+import { Platform } from 'react-native';
+import { createStackNavigator,createMaterialTopTabNavigator,createBottomTabNavigator } from 'react-navigation';
+
+import TabBarIcon from '../components/TabBarIcon';
+import PhotographySchedulingScreen from '../screens/PhotographyFolder/PhotographySchedulingScreen';
+import ShootDeckScreen from '../screens/PhotographyFolder/ShootDeckScreen';
+
+import ShootPickerScreen from '../screens/PhotographyFolder/ShootPickerScreen';
+import PhotographerProfileScreen from '../../../photographerProfile/PhotographerProfileScreen';
+
+
+const ShootDetailsStack = createStackNavigator({
+  'SchedulingShoot': PhotographySchedulingScreen,
+  'PhotographerProfile':PhotographerProfileScreen,
+  'ShootDeck': ShootDeckScreen,
+
+});
+
+
+/*
+const PhotographyTabNavigator = createBottomTabNavigator(
+
+{
+    SchedulingShoot: {
+        screen: ShootDetailsStack,
+        navigationOptions: {
+            tabBarLabel: 'Scheduling',
+
+            tabBarIcon: ({ focused }) => (
+              <TabBarIcon
+                focused={focused}
+                name={Platform.OS === 'ios' ? 'md-time' : 'md-link'}
+              />
+            ),
+
+            tabBarOptions: {
+                activeTintColor: '#2896d3',
+                labelStyle: {
+                    fontSize: 14,
+                },
+            },
+        },
+    },
+
+    Media: {
+        screen: MediaScreen,
+        navigationOptions: {
+            tabBarLabel: 'Media',
+
+            tabBarIcon: ({ focused }) => (
+              <TabBarIcon
+                focused={focused}
+                name={Platform.OS === 'ios' ? 'md-images' : 'md-link'}
+              />
+            ),
+
+            tabBarOptions: {
+                activeTintColor: '#2896d3',
+                labelStyle: {
+                    fontSize: 14,
+                },
+            },
+        },
+    }
+}
+);
+*/
+
+const PhotographyStack = createStackNavigator({
+  'PhotoShoot': ShootPickerScreen,
+  'PhotographyTabNavigator':ShootDetailsStack,
+
+});
+
+
+
+
+
+
+export default PhotographyStack;

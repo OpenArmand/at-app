@@ -55,6 +55,8 @@ await this.socket.on('loginStatus', async(data)=>{
 
     if(data.status=="success"){
       await SecureStore.setItemAsync('usernameToken',this.state.screenUserName);
+      await SecureStore.setItemAsync('firstNameToken',data.firstName);
+
       await SecureStore.setItemAsync('entityToken',data.businessName);
 
       if (data.businessName=="ContentCreator"){

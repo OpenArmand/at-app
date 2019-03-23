@@ -11,7 +11,7 @@ import MainSurveillanceScreen from '../screens/SurveillanceFolder/MainSurveillan
 
 import ContentTabNavigator from './ContentTabNavigator';
 import PhotographyTabNavigator from './PhotographyTabNavigator';
-import AdTabNavigator from './AdTabNavigator';
+import AdStack from './AdStack';
 
 import InfluencerTabNavigator from './InfluencerTabNavigator';
 
@@ -48,7 +48,7 @@ const AdDrawerNavigator = createDrawerNavigator({
     screen:InfluencerTabNavigator,
   },
   Ads:{
-    screen:AdTabNavigator,
+    screen:AdStack,
   },
   Survaillance:{
     screen:MainSurveillanceScreen,

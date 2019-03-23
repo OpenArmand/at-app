@@ -10,16 +10,14 @@ import MainAnalyticScreen from '../screens/AnalyticFolder/MainAnalyticScreen';
 import MainSurveillanceScreen from '../screens/SurveillanceFolder/MainSurveillanceScreen';
 
 import ContentTabNavigator from './ContentTabNavigator';
-import PhotographyTabNavigator from './PhotographyTabNavigator';
-import AdTabNavigator from './AdTabNavigator';
+import PhotographyStack from './PhotographyStack';
+import AdStack from './AdStack';
 
-import InfluencerTabNavigator from './InfluencerTabNavigator';
+import InfluencerStack from './InfluencerStack';
 
 import MainStrategyScreen from '../screens/StrategyFolder/MainStrategyScreen';
 
 import MainTabNavigator from '../../../HomeFolder/MainTabNavigator';
-
-
 
 import ClientScreen from '../screens/ClientPick/ClientScreen';
 import ClientSettingsScreen from '../screens/ClientPick/config/ClientSettingsScreen';
@@ -30,7 +28,6 @@ import CallScreen from '../../../HomeFolder/CallScreen';
 
 import CoreAssignScreen from '../screens/ClientPick/config/CoreAssignScreen';
 import ContentCreatorAssignScreen from '../screens/ClientPick/config/ContentCreatorAssignScreen';
-
 
 
 
@@ -48,13 +45,14 @@ const DrawerNavigator = createDrawerNavigator({
     screen:ContentTabNavigator,
   },
   Photography:{
-    screen:PhotographyTabNavigator,
+   screen:PhotographyStack,
+  //  screen: PhotographyScreen,
   },
   Influencers:{
-    screen:InfluencerTabNavigator,
+    screen:InfluencerStack,
   },
   Ads:{
-    screen:AdTabNavigator,
+    screen:AdStack,
   },
   Surveillance:{
     screen:MainSurveillanceScreen,
@@ -64,6 +62,8 @@ const DrawerNavigator = createDrawerNavigator({
   },
 
 });
+
+
 
 
 const ClientStack = createStackNavigator({
@@ -77,9 +77,6 @@ const ClientStack = createStackNavigator({
 });
 
 
-
-
-
 const contentCreatorClientSwitch= createSwitchNavigator({
   // You could add another route here for authentication.
   // Read more at https://reactnavigation.org/docs/en/auth-flow.html
@@ -87,6 +84,7 @@ const contentCreatorClientSwitch= createSwitchNavigator({
   Drawer: DrawerNavigator,
   Brainstorm:BrainstormScreen,
   MonthlyCall: CallScreen,
+
 
 });
 

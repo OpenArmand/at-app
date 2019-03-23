@@ -1,97 +1,57 @@
-socket.on('assignCore', async function(data){
-      var msg='';
-      var clientObj;
-      await  ClientModel.findOne({username:data.clientUsername}, function(err, user) {
-        if (err || user==undefined){
-          msg+="error";
-        }
-        else{
+influencerCampaignssocket.on('requestAllInfluencerCampaigns', function(data){
 
-          if(user.coreUsername!=undefined||user.coreUsername!=null||user.coreUsername!=''){
-            user.coreUsername=data.coreUsername;
-            var coreOldUsername="none";
-          }
-          else if(user.coreUsername==data.coreUsername){
-            socket.emit('CoreAssignedMsg', 'This content creator is already assigned to this client'); // emit an event to the socket
-            return;
-          }
-          else{
-            var coreOldUsername=user.coreUsername;
-            user.coreUsername=data.coreUsername;
-          }
+  ClientModel.findOne({ username: data.clientUsername }, function(err, user) {
+    socket.emit('gottenAllInfluencerCampaigns', user.influencerCampaigns); // emit an event to the socket
+
+      });
+    });
 
 
-          msg+=user.coreUsername+" assigned to "+user.businessName;
-          if(data.configClicked!='true'){
-            user.popAndAdd(user.signUpQueue,"God","Assign A Core");
+    socket.on('createInfluencerCampaign', function(data){
 
+      ClientModel.findOne({ username: data.clientUsername }, async function(err, user) {
+        var newDate= new Date();
+        var IndiaDateToday=newDate.toLocaleDateString('en-US', {timeZone: "Asia/Kolkata"}); //1/27/2019
+
+        var name="initiated:"+IndiaDateToday;
+
+          var newAdSet= {name:name,key:data.key, client:user.businessName, clientUsername:user.username};
+          var existingInfluencerCampaigns=user.influencerCampaigns;
+          if(existingInfluencerCampaigns==undefined || existingInfluencerCampaigns==null){
+            existingInfluencerCampaigns=[];
           }
 
+          existingInfluencerCampaigns.unshift(newAdSet);
 
-        clientObj={key:user.username,username:user.username,businessName:user.businessName};
-          user.save();
+          user.influencerCampaigns=existingInfluencerCampaigns;
 
-        }
-      })
+        await user.save();
+          socket.emit('influencerCampaignCreated',''); // emit an event to the socket
 
-      CoreModel.findOne({username:data.coreUsername}, function(err, user) {
-        if (err || user== undefined){
-          msg+="error";
-        }
-        else{
 
-          var clients=user.clients;
-          var clientArr=[];
-          console.log("clients:"+clients);
+            });
+          });
 
-          if (clients==undefined || clients==""){
-            clientArr.push(clientObj);
-            user.clients=clientArr;
-            console.log("user.clients:"+user.clients);
-          }
-          else{
-            //on old client
-            clients.push(clientObj);
-          }
-        user.clientUsername=data.clientUsername;
-        msg+= "assigned clients:"+user.clients;
-        }
 
-        user.save();
+          socket.on('deleteInfluencerCampaign', function(data){
 
-        socket.emit('CoreAssignedMsg', msg); // emit an event to the socket
+            ClientModel.findOne({ username: data.clientUsername }, async function(err, user) {
 
-      })
+              var influencerCampaigns= user.influencerCampaigns;
 
-    if(coreOldUsername!='none'){
-      CoreModel.findOne({username:coreOldUsername}, function(err, user) {
-        if (err || user== undefined){
-          msg+="error";
-        }
-        else{
-
-          var clients=user.clients;
-          console.log("clients:"+clients);
-            //on old client
-
-            var foundClient = clients.find(function(element) {
-              if(element.username==data.clientUsername){
+              var found = influencerCampaigns.find(function(element) {
+              if(element.key.valueOf()==data.key.valueOf()){
               return element;
               }
-            });
+              });
 
-            var index = foundClient.indexOf(foundClient);
-            clients.splice(index, 1);
-            user.clients=clients;
-
-          }
-        user.clientUsername='';
-
-        user.save();
+              var index = influencerCampaigns.indexOf(found);
 
 
-      })
-    }
+              influencerCampaigns.splice(index, 1);
+              user.influencerCampaigns=influencerCampaigns;
+            await  user.save();
+              socket.emit('influencerCampaignDeleted',''); // emit an event to the socket
 
-
-    });
+                  });
+                });

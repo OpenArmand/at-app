@@ -12,7 +12,7 @@ export default class ClientSettingsScreen extends React.Component {
   constructor(){
     super()
     this.state={
-      dataSource:[{key:"Assign a core",value:"Assign a Core"},{key:"Assign a content creator",value:"Assign a Content Creator"},{key:"ConfigCalendar", value:"Configure the calendar"},{key:"RemoveService", value:"Remove a service"},{key:"AddService", value:"Add a service"}],
+      dataSource:[{key:"Assign a core",value:"Assign a Core"},{key:"Assign a content creator",value:"Assign a Content Creator"},{key:"AssignPhotographers", value:"Assign Photographers"},{key:"ConfigCalendar", value:"Configure the calendar"},{key:"RemoveService", value:"Remove a service"},{key:"AddService", value:"Add a service"}],
     }
 
   }
@@ -23,8 +23,11 @@ export default class ClientSettingsScreen extends React.Component {
           if(key=="Assign a core"){
             this.props.navigation.navigate('CoreAssign');
           }
-          if(key=="Assign a content creator"){
+          else if(key=="Assign a content creator"){
             this.props.navigation.navigate('ContentCreatorAssign');
+          }
+          else if(key=="AssignPhotographers"){
+            this.props.navigation.navigate('PhotographerAssign');
           }
 
           else if(key=="RemoveService"){

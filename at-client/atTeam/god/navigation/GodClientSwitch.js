@@ -29,6 +29,7 @@ import AddServiceScreen from '../screens/ClientPick/config/AddServiceScreen';
 import RemoveServiceScreen from '../screens/ClientPick/config/RemoveServiceScreen';
 import SelectAddServiceScreen from '../screens/ClientPick/config/SelectAddServiceScreen';
 import SelectRemoveServiceScreen from '../screens/ClientPick/config/SelectRemoveServiceScreen';
+import PhotographerAssignScreen from '../screens/ClientPick/config/PhotographerAssignScreen';
 
 const DrawerNavigator = createDrawerNavigator({
   Home: {
@@ -74,6 +75,8 @@ const ClientStack = createStackNavigator({
   'CoreAssign':CoreAssignScreen,
   'ContentCreatorAssign':ContentCreatorAssignScreen,
   'ClientSettings':ClientSettingsScreen,
+  'PhotographerAssign':PhotographerAssignScreen,
+
 
 });
 

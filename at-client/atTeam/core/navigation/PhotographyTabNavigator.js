@@ -4,17 +4,44 @@ import { createStackNavigator,createMaterialTopTabNavigator,createBottomTabNavig
 
 import TabBarIcon from '../components/TabBarIcon';
 import PhotographySchedulingScreen from '../screens/PhotographyFolder/PhotographySchedulingScreen';
-import ShootPlanScreen from '../screens/PhotographyFolder/ShootPlanScreen';
+import ShootDeckScreen from '../screens/PhotographyFolder/ShootDeckScreen';
+
 import MediaScreen from '../screens/PhotographyFolder/MediaScreen';
+import ShootPickerScreen from '../screens/PhotographyFolder/ShootPickerScreen';
 
 
+const ShootDetailsStack = createStackNavigator({
+  'SchedulingShoot': PhotographySchedulingScreen,
+  'ShootDeck': ShootDeckScreen,
 
+});
 
 const PhotographyTabNavigator = createBottomTabNavigator(
 
 {
+  PhotoShoot:{
+      screen: ShootPickerScreen,
+      navigationOptions: {
+          tabBarLabel: 'Pick Shoot',
+
+          tabBarIcon: ({ focused }) => (
+            <TabBarIcon
+              focused={focused}
+              name={Platform.OS === 'ios' ? 'md-clipboard' : 'md-link'}
+            />
+          ),
+
+          tabBarOptions: {
+              activeTintColor: '#2896d3',
+              labelStyle: {
+                  fontSize: 14,
+              },
+          },
+      },
+  },
+
     SchedulingShoot: {
-        screen: PhotographySchedulingScreen,
+        screen: ShootDetailsStack,
         navigationOptions: {
             tabBarLabel: 'Scheduling',
 
@@ -22,27 +49,6 @@ const PhotographyTabNavigator = createBottomTabNavigator(
               <TabBarIcon
                 focused={focused}
                 name={Platform.OS === 'ios' ? 'md-time' : 'md-link'}
-              />
-            ),
-
-            tabBarOptions: {
-                activeTintColor: '#2896d3',
-                labelStyle: {
-                    fontSize: 14,
-                },
-            },
-        },
-    },
-
-    ShootPlan: {
-        screen: ShootPlanScreen,
-        navigationOptions: {
-            tabBarLabel: 'Plan',
-
-            tabBarIcon: ({ focused }) => (
-              <TabBarIcon
-                focused={focused}
-                name={Platform.OS === 'ios' ? 'md-clipboard' : 'md-link'}
               />
             ),
 

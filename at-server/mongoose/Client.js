@@ -15,15 +15,25 @@ var CoreSchema= Core.CoreSchema;
 
 var atObjects= require('./atObjects.js');
 
+var Photographer= require('./Photographer.js');
+
+var PhotographerSchema= Photographer.PhotographerSchema;
+
+
 var StrategySchema = atObjects.StrategySchema;
 var PostSchema = atObjects.PostSchema;
 var ContentCalendarSchema = atObjects.ContentCalendarSchema;
 var ShootPlanSchema = atObjects.ShootPlanSchema;
 var PhotoShootSchema = atObjects.PhotoShootSchema;
+
+var PhotoShootSchema = atObjects.PhotoShootSchema;
 var InfluencerPlanSchema= atObjects.InfluencerPlanSchema;
 var InfluencerEventSchema= atObjects.InfluencerEventSchema;
 var SurveillanceSchema= atObjects.SurveillanceSchema;
 var AnalyticSchema= atObjects.AnalyticSchema;
+
+var AdSetSchema= atObjects.AdSetSchema;
+var InfluencerCampaignSchema=atObjects.InfluencerCampaignSchema;
 
 
 /*
@@ -87,12 +97,18 @@ var itemSchema= new Schema({
    core:CoreSchema,
    selectedPackage:String,
    services:[String],
+   photoShoots:[PhotoShootSchema],
+   adSets:[AdSetSchema],
+   influencerCampaigns:[InfluencerCampaignSchema],
+
     motherQueue:[itemSchema],
     signUpQueue:[itemSchema],
     adQueue:[itemSchema],
     influencerQueue:[itemSchema],
     engagementCampaignQueue:[itemSchema],
     callQueue:[itemSchema],
+    photographers:[PhotographerSchema],
+    shortListedPhotographers:[PhotographerSchema],
 
     motherCalendar: {
      type: Map,
@@ -160,10 +176,6 @@ var itemSchema= new Schema({
   influencerRating:[Number],
   engagementCampaignRating:[Number],
   overallRating:[Number],
-
-
-
-
 
 
  });

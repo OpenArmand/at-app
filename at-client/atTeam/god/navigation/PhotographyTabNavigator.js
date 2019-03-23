@@ -13,6 +13,27 @@ import MediaScreen from '../screens/PhotographyFolder/MediaScreen';
 const PhotographyTabNavigator = createBottomTabNavigator(
 
 {
+
+  ShootPlan: {
+      screen: ShootPlanScreen,
+      navigationOptions: {
+          tabBarLabel: 'Plan',
+
+          tabBarIcon: ({ focused }) => (
+            <TabBarIcon
+              focused={focused}
+              name={Platform.OS === 'ios' ? 'md-clipboard' : 'md-link'}
+            />
+          ),
+
+          tabBarOptions: {
+              activeTintColor: '#2896d3',
+              labelStyle: {
+                  fontSize: 14,
+              },
+          },
+      },
+  },
     SchedulingShoot: {
         screen: PhotographySchedulingScreen,
         navigationOptions: {
@@ -22,27 +43,6 @@ const PhotographyTabNavigator = createBottomTabNavigator(
               <TabBarIcon
                 focused={focused}
                 name={Platform.OS === 'ios' ? 'md-time' : 'md-link'}
-              />
-            ),
-
-            tabBarOptions: {
-                activeTintColor: '#2896d3',
-                labelStyle: {
-                    fontSize: 14,
-                },
-            },
-        },
-    },
-
-    ShootPlan: {
-        screen: ShootPlanScreen,
-        navigationOptions: {
-            tabBarLabel: 'Plan',
-
-            tabBarIcon: ({ focused }) => (
-              <TabBarIcon
-                focused={focused}
-                name={Platform.OS === 'ios' ? 'md-clipboard' : 'md-link'}
               />
             ),
 

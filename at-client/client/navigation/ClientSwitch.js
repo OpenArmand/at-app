@@ -10,10 +10,10 @@ import MainAnalyticScreen from '../screens/AnalyticFolder/MainAnalyticScreen';
 import MainSurveillanceScreen from '../screens/SurveillanceFolder/MainSurveillanceScreen';
 
 import ContentTabNavigator from './ContentTabNavigator';
-import PhotographyTabNavigator from './PhotographyTabNavigator';
-import AdTabNavigator from './AdTabNavigator';
+import PhotographyStack from './PhotographyStack';
+import AdStack from './AdStack';
 
-import InfluencerTabNavigator from './InfluencerTabNavigator';
+import InfluencerStack from './InfluencerStack';
 
 import MainStrategyScreen from '../screens/StrategyFolder/MainStrategyScreen';
 
@@ -41,13 +41,13 @@ const ClientDrawerNavigator = createDrawerNavigator({
     screen:ContentTabNavigator,
   },
   Photography:{
-    screen:PhotographyTabNavigator,
+    screen:PhotographyStack,
   },
   Influencers:{
-    screen:InfluencerTabNavigator,
+    screen:InfluencerStack,
   },
   Ads:{
-    screen:AdTabNavigator,
+    screen:AdStack,
   },
   Survaillance:{
     screen:MainSurveillanceScreen,
